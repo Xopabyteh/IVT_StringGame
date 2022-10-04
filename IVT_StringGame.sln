@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32901.215
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IVT_StringGame", "IVT_StringGame\IVT_StringGame.csproj", "{B42F2417-533A-4C6C-878E-89FBE5B4FF18}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B42F2417-533A-4C6C-878E-89FBE5B4FF18}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B42F2417-533A-4C6C-878E-89FBE5B4FF18}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B42F2417-533A-4C6C-878E-89FBE5B4FF18}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B42F2417-533A-4C6C-878E-89FBE5B4FF18}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {AD63AFDE-C69C-41AD-986C-DA110B195E4F}
+	EndGlobalSection
+EndGlobal
