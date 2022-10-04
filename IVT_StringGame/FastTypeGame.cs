@@ -42,6 +42,10 @@ class FastTypeGame
                 throw new InvalidOperationException("Prompt answer out of bounds");
         }
 
+        if (name.ToLower() == "honza")
+        {
+            difficultyLives *= 2;
+        }
         lives = difficultyLives;
         //Game
         SlowWriteLine($"You now have {lives} lives");
@@ -175,8 +179,8 @@ class FastTypeGame
         Console.BackgroundColor = ConsoleColor.Black;
         Console.SetCursorPosition(curPos.Left, curPos.Top);
     }
-    private const int SLOW_PRINT_DELAY = 30;
-    private const int SLOW_PRINT_DELAY_LN = 200;
+    private const int SLOW_PRINT_DELAY = 38;
+    private const int SLOW_PRINT_DELAY_LN = 214;
 
     private Dictionary<char, int> specialWaitSymbols = new()
     {
