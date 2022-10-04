@@ -1,4 +1,11 @@
 ﻿using IVT_StringGame;
 
-var g = new FastTypeGame();
-g.Play();
+Console.Title = "Fast type game";
+
+while (true)
+{
+    Console.Clear();
+    var g = new FastTypeGame();
+    g.Play();
+}
+    

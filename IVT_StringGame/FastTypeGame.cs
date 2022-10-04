@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Net.Mime;
 using System.Xml.Linq;
 
 namespace IVT_StringGame;
@@ -6,7 +7,8 @@ namespace IVT_StringGame;
 class FastTypeGame
 {
     private Stopwatch sw;
-
+    private int lives;
+    private int difficultyLives;
     public FastTypeGame()
     {
         sw = new Stopwatch();
@@ -26,21 +28,21 @@ class FastTypeGame
         //Choose difficulty
         SlowWriteLine("Now lets choose your difficulty..");
         var difficulty = Prompt("Hard", "Harder");
-        int lives;
         switch (difficulty.choiceIndex)
         {
             case 0:
-                lives = 5;
+                difficultyLives = 5;
                 SlowWriteLine("Lame... But lets play.");
                 break;
             case 1:
-                lives = 1;
+                difficultyLives = 1;
                 SlowWriteLine("Now that's how you game!");
                 break;
             default:
                 throw new InvalidOperationException("Prompt answer out of bounds");
         }
 
+        lives = difficultyLives;
         //Game
         SlowWriteLine($"You now have {lives} lives");
         SlowWriteLine("Ok, let's start with a simple word... maybe your name!");
@@ -49,21 +51,47 @@ class FastTypeGame
         SlowWriteLine("Try to get the best time!");
         SlowWriteLine("Case sensitive!!!");
 
-        PlayForString(name);
-
+        if (!PlayForString(name))
+        {
+            SlowWriteLine("Oh did you just lose on the first level...................... :'(");
+            return;
+        }
         SlowWriteLine($"Let's go up a level now!");
 
-        PlayForString("He ate a steak");
-        PlayForString("Today is a lovely day with no mistakes, only happy little accidents");
-
-        while (true)
+        if (!PlayForString("He ate a steak"))
         {
-            Console.ReadLine();
+            SlowWriteLine("It's just the second level and you've died alredy");
+            return;
         }
+        SlowWriteLine("That must have been beginners luck, harder!");
+
+        
+        if (!PlayForString("Today is a lovely day with no mistakes, only happy little accidents"))
+        {
+            return;
+        }
+        SlowWriteLine("Happy day!");
+
+        if (!PlayForString("Hard weird palindromic words help affluent aggrandize a persons mind"))
+        {
+            SlowWriteLine("It was the last level, you were so close :(");
+            return;
+        }
+        SlowWriteLine("Do you even know what those words mean?");
+        SlowWriteLine("It doesn't matter, you won. Good job!");
+
+        Prompt("Quit","Leave","Exit");
+        Environment.Exit(0);
     }
 
     const int PLAY_SPACE_SPACING_TOP = 2;
-    private void PlayForString(string playString)
+
+    /// <summary>
+    /// Returns true when the player passed and false when he dies
+    /// </summary>
+    /// <param name="playString"></param>
+    /// <returns></returns>
+    private bool PlayForString(string playString)
     {
         //Ready
         Console.WriteLine("Get ready!");
@@ -85,6 +113,7 @@ class FastTypeGame
         int playStringIndex = 0;
         while (true)
         {
+            LogLives(lives,playString.Length);
             var key = Console.ReadKey(true).KeyChar;
             
             //Don't allow functional characters
@@ -94,11 +123,31 @@ class FastTypeGame
             var wordLetter = playString[playStringIndex];
             if ((int)key == (int)wordLetter)
             {
-                Console.BackgroundColor = ConsoleColor.Green;
+                Console.BackgroundColor = ConsoleColor.DarkGreen;
             } 
             else
             {
                 //Wrong playString
+                lives--;
+
+                if (lives <= 0)
+                {
+                    Console.BackgroundColor = ConsoleColor.Black;
+                    Console.Clear();
+                    SlowWriteLine("Oh noes, you died.");
+                    var deathChoice = Prompt("Play from start", "More lives please");
+                    switch (deathChoice.choiceIndex)
+                    {
+                        case 0:
+                            return false;
+                        case 1:
+                            SlowWriteLine("\nYou may continue.");
+                            lives += difficultyLives;
+                            return PlayForString(playString);
+                    }
+                    
+                    continue;
+                }
                 Console.BackgroundColor = ConsoleColor.Red;
             }
 
@@ -114,11 +163,20 @@ class FastTypeGame
         Console.WriteLine();
         SlowWriteLine($"Wow! You did it in {sw.Elapsed.TotalMilliseconds}ms");
         sw.Stop();
-
+        return true;
     }
 
-    private const int SLOW_PRINT_DELAY = 1;//30;
-    private const int SLOW_PRINT_DELAY_LN = 1;//200;
+    private void LogLives(int lives, int wordLength)
+    {
+        var curPos = Console.GetCursorPosition();
+        Console.SetCursorPosition(wordLength+1, curPos.Top - 1);
+        Console.BackgroundColor = ConsoleColor.DarkRed;
+        Console.Write($"{lives}HP");
+        Console.BackgroundColor = ConsoleColor.Black;
+        Console.SetCursorPosition(curPos.Left, curPos.Top);
+    }
+    private const int SLOW_PRINT_DELAY = 30;
+    private const int SLOW_PRINT_DELAY_LN = 200;
 
     private Dictionary<char, int> specialWaitSymbols = new()
     {
@@ -127,8 +185,14 @@ class FastTypeGame
         {',', SLOW_PRINT_DELAY * 3},
     };
 
+    private bool WriteColorSwitch;
+    private const int SHOWN_MESSAGES_UNTIL_SCROLL = 2;
     private void SlowWrite(string? s)
     {
+        var curPos = Console.GetCursorPosition();
+
+        WriteColorSwitch = !WriteColorSwitch;
+        Console.ForegroundColor = WriteColorSwitch ? ConsoleColor.White : ConsoleColor.Gray;
         foreach (var ch in s)
         {
             Console.Write(ch);
@@ -191,7 +255,7 @@ class FastTypeGame
             key = Console.ReadKey(true);
             if(!int.TryParse(key.KeyChar.ToString(),out res))
                 continue;
-            if(res >= choices.Length || res <= 0)
+            if(res > choices.Length || res <= 0)
                 continue;
 
             break;
